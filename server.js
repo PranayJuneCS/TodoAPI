@@ -16,29 +16,29 @@ app.get("/", function(req, res) {
 
 // GET /todos?completed=__&q=__
 app.get("/todos", function(req, res) {
-	var queryParams = req.query;
-	var filteredTodos = todos;
+	var query = req.query;
+	var where = {};
 
-	if (queryParams.hasOwnProperty("completed")) {
-		if (queryParams.completed === "true") {
-			filteredTodos = _.where(filteredTodos, {
-				completed: true
-			});
-		} else {
-			filteredTodos = _.where(filteredTodos, {
-				completed: false
-			});
+	if (query.hasOwnProperty("completed")) {
+		if (query.completed === "true") {
+			where.completed = true;
+		} else if (query.completed === "false") {
+			where.completed = false;
 		}
 	}
 
-	if (queryParams.hasOwnProperty("q")) {
-		filteredTodos = _.filter(filteredTodos, function(todo) {
-			var temp = todo.description.toLowerCase();
-			return temp.indexOf(queryParams.q.toLowerCase()) > -1;
-		});
+	if (query.hasOwnProperty("q") && query.q.length > 0) {
+		where.description = {
+			$like: "%" + query.q + "%"
+		};
 	}
 
-	res.json(filteredTodos);
+	db.todo.findAll({where: where}).then(function (todos) {
+		res.json(todos);
+	}, function (e) {
+		res.status(500).send();
+	});
+
 });
 // GET /todos/:id
 app.get("/todos/:id", function(req, res) {
