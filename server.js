@@ -10,6 +10,3 @@ app.get("/", function (req, res) {
 app.listen(PORT, function () {
 	console.log("Listening, port " + PORT);
 })
-
-//git subtree push --prefix todo-api heroku master
-//Use from node dir to push to heroku
