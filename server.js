@@ -14,6 +14,8 @@ app.get("/", function(req, res) {
 	res.send("TODO API Root");
 });
 
+//Todos
+
 // GET /todos?completed=__&q=__
 app.get("/todos", function(req, res) {
 	var query = req.query;
@@ -116,6 +118,19 @@ app.put("/todos/:id", function(req, res) {
 		}
 	}, function () {
 		res.status(500).send();
+	});
+});
+
+//Users
+
+app.post("/users", function (req, res) {
+	var body = _.pick(req.body, "email",
+		"password");
+
+	db.user.create(body).then(function (user) {
+		res.json(user.toJSON());
+	}, function (e) {
+		res.status(400).json(e);
 	});
 });
 
